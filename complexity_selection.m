@@ -75,16 +75,16 @@ legend('First Code Complexity','Second Code Complexity','Number of Lines for the
     'Weighted Sum for the First Code','Weighted Sum for the Second Code')
 grid
 
-%figure
-%plot(x(1),7,'*')
-%hold on
-%plot(x(1),8,'O')
-%hold on
-%plot(x(2),6,'*')
-%hold on
-%plot(x(2),19,'O')
-%legend('Number of Statement of the First Code','Cyclomatic Complexity of First Code','Number of Statement of the Second Code','Cyclomatic Complexity of Second Code')
-%grid
+figure
+plot(x(1),7,'*')
+hold on
+plot(x(1),10,'O')
+hold on
+plot(x(2),6,'*')
+hold on
+plot(x(2),9,'O')
+legend('Number of Statement of the First Code','Cyclomatic Complexity of First Code','Number of Statement of the Second Code','Cyclomatic Complexity of Second Code')
+grid
 
 
 
@@ -125,7 +125,7 @@ function [output,total_line]=calculateCyclomaticComplexityWithNesting(filePath)
             % Check for nesting keywords
             for k = 1:length(keywords)
                 keyword = keywords{k};
-                if contains(line, keyword)
+                if contains(line, keyword) 
                     %nestingDepth = nestingDepth + 1; % Enter new block
                     decisionCounts(keyword) = decisionCounts(keyword) + 1;
                     bulundu=bulundu+1;
