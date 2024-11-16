@@ -1,39 +1,19 @@
 import random
 import logging
-import matplotlib.pyplot as plt
+from debugger_agent import DebuggerAgent
+from evaluator_agent import EvaluatorAgent
+from plotting import plot_results
 import networkx as nx
-from itertools import permutations
 
 # Configure logging
 logging.basicConfig(level=logging.DEBUG, format='%(asctime)s - %(levelname)s - %(message)s')
-
-class DebuggerAgent:
-    def __init__(self, name):
-        self.name = name
-        self.proposed_permutations = set()
-
-    def propose_permutation(self, word):
-        # Propose a random permutation of the letters in the word
-        while True:
-            perm = ''.join(random.sample(word, len(word)))
-            if perm not in self.proposed_permutations:
-                self.proposed_permutations.add(perm)
-                return perm
-
-class EvaluatorAgent:
-    def evaluate_permutation(self, word, correct_word):
-        # Evaluate the permutation based on similarity and positional distance to the correct word
-        similarity = sum(a == b for a, b in zip(word, correct_word)) / len(correct_word)
-        positional_distance = sum(abs(word.index(a) - correct_word.index(b)) for a, b in zip(word, correct_word)) / len(correct_word)
-        score = similarity - (positional_distance / len(correct_word))
-        return score
 
 # Initialize agents
 debugger_agents = [DebuggerAgent(name) for name in ["Agent1", "Agent2", "Agent3"]]
 evaluator_agent = EvaluatorAgent()
 
 # Example word to be corrected
-word = "loehl"
+word = "hleol"
 correct_word = "hello"
 
 # RL Loop
@@ -131,47 +111,5 @@ logging.debug("Final Word:")
 logging.debug(f"{best_word}")
 logging.debug(f"Final Score: {best_score}")
 
-# Plot the overall score evolution and words found at each iteration
-plt.figure(figsize=(10, 5))
-plt.plot(range(1, iterations + 1), scores, marker='o', linestyle='-', color='b', label='Score Evolution')
-
-# Highlight exploration points in red
-for idx in exploration_iterations:
-    plt.plot(idx, scores[idx - 1], 'ro')  # Plot exploration points in red
-
-plt.xlabel('Iteration')
-plt.ylabel('Score')
-plt.title('Overall Score Evolution')
-plt.legend()
-
-# Annotate the words found at each iteration
-for i, word in enumerate(words):
-    plt.annotate(word, (i + 1, scores[i]), textcoords="offset points", xytext=(0, 5), ha='center')
-
-plt.show()
-
-# Plot the communication graphs for the last 3 iterations
-num_iterations = len(proposal_graphs)
-start_index = max(0, num_iterations - 3)
-
-fig, axes = plt.subplots(nrows=3, ncols=2, figsize=(15, 15))
-
-for i in range(start_index, num_iterations):
-    row = i - start_index
-
-    # Plot proposal graph
-    pos = nx.spring_layout(proposal_graphs[i], k=0.5, iterations=50)
-    labels = nx.get_edge_attributes(proposal_graphs[i], 'label')
-    nx.draw(proposal_graphs[i], pos, with_labels=True, node_size=3000, node_color="skyblue", font_size=10, font_color="black", font_weight="bold", arrows=True, ax=axes[row, 0])
-    nx.draw_networkx_edge_labels(proposal_graphs[i], pos, edge_labels=labels, font_size=8, font_color='red', ax=axes[row, 0])
-    axes[row, 0].set_title(f'Iteration {i + 1} - Proposals')
-
-    # Plot response graph
-    pos = nx.spring_layout(response_graphs[i], k=0.5, iterations=50)
-    labels = nx.get_edge_attributes(response_graphs[i], 'label')
-    nx.draw(response_graphs[i], pos, with_labels=True, node_size=3000, node_color="skyblue", font_size=10, font_color="black", font_weight="bold", arrows=True, ax=axes[row, 1])
-    nx.draw_networkx_edge_labels(response_graphs[i], pos, edge_labels=labels, font_size=8, font_color='red', ax=axes[row, 1])
-    axes[row, 1].set_title(f'Iteration {i + 1} - Responses')
-
-plt.tight_layout()
-plt.show()
+# Plot the results
+plot_results(scores, words, exploration_iterations, proposal_graphs, response_graphs)
