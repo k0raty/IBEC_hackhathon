@@ -11,7 +11,7 @@ generator.model.config.max_new_tokens = 200  # Generate more tokens if necessary
 # Create the LLM with the updated pipeline
 llm = HuggingFacePipeline(pipeline=generator)
 
-class DebuggerAgent:
+class OptimizerAgent:
     def __init__(self, name):
         self.name = name
 
@@ -29,37 +29,37 @@ class DebuggerAgent:
             print(f"Error reading file: {e}")
             return None
 
-    def debug_code(self, file_path):
+    def optimize_code(self, file_path):
         """
-        Debugs the code in the given Python file using a Hugging Face model.
+        Optimizes the code in the given Python file using a Hugging Face model.
 
-        :param file_path: Path to the Python file to be debugged.
-        :return: The corrected code.
+        :param file_path: Path to the Python file to be optimized.
+        :return: The optimized code.
         """
         # Step 1: Read the code from the file
         code = self.get_code_from_file(file_path)
         if not code:
             return "Failed to read the file. Please check the file path."
 
-        # Step 2: Send the code to the Hugging Face model for debugging
-        prompt = f"Here is a Python code with errors:\n{code}\n\nFix it."
+        # Step 2: Send the code to the Hugging Face model for optimization
+        prompt = f"Here is a Python code that can be optimized:\n{code}\n\nOptimize it."
 
-        # Use the Hugging Face model to generate the corrected code
-        corrected_code = llm.invoke(prompt)  # Use .invoke() instead of .__call__()
+        # Use the Hugging Face model to generate the optimized code
+        optimized_code = llm.invoke(prompt)  # Use .invoke() instead of .__call__()
 
-        return corrected_code
+        return optimized_code
 
 # Example Usage
 if __name__ == "__main__":
-    # Define the file path of the code you want to debug (e.g., "sample.py")
+    # Define the file path of the code you want to optimize (e.g., "sample.py")
     file_path = "sample_code.py"  # Replace with the path to your file
 
-    # Create a DebuggerAgent instance
-    debugger_agent = DebuggerAgent(name="DebuggerAgent")
+    # Create an OptimizerAgent instance
+    optimizer_agent = OptimizerAgent(name="OptimizerAgent")
 
-    # Call the function to debug the code
-    corrected_code = debugger_agent.debug_code(file_path)
+    # Call the function to optimize the code
+    optimized_code = optimizer_agent.optimize_code(file_path)
 
-    # Print the corrected code
-    print("\nCorrected Code:\n")
-    print(corrected_code)
+    # Print the optimized code
+    print("\nOptimized Code:\n")
+    print(optimized_code)
