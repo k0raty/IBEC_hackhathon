@@ -5,6 +5,9 @@ close all
 %complexity
 
 [complexity,total_line]=calculateCyclomaticComplexityWithNesting('strategy_cost_IBEC.m')
+
+
+
 function [output,total_line]=calculateCyclomaticComplexityWithNesting(filePath)
     % List of decision keywords to search for
     keywords = {'if', 'else if', 'for', 'while', 'switch', 'case', 'try', 'catch'};
@@ -14,6 +17,7 @@ function [output,total_line]=calculateCyclomaticComplexityWithNesting(filePath)
     complexityCount = 0;
     nestingDepth = 0;
     total_line = 0;
+    bulundu=0;
     decisionCounts = containers.Map('KeyType', 'char', 'ValueType', 'double');
     
     % Initialize counters for each keyword
@@ -41,14 +45,21 @@ function [output,total_line]=calculateCyclomaticComplexityWithNesting(filePath)
             for k = 1:length(keywords)
                 keyword = keywords{k};
                 if contains(line, keyword)
-                    nestingDepth = nestingDepth + 1; % Enter new block
+                    %nestingDepth = nestingDepth + 1; % Enter new block
                     decisionCounts(keyword) = decisionCounts(keyword) + 1;
+                    bulundu=bulundu+1;
                 end
             end
             
             % Check for block exits
             if contains(line, endKeyword)
-                nestingDepth = max(0, nestingDepth - 1); % Exit block safely
+                %nestingDepth = max(0, nestingDepth - 1); % Exit block safely
+                if bulundu >=1
+                    nestingDepth=nestingDepth+bulundu-1;
+                    bulundu=bulundu-1;
+
+
+                end
             end
         end
         fclose(fileID);
@@ -59,6 +70,9 @@ function [output,total_line]=calculateCyclomaticComplexityWithNesting(filePath)
         % Cyclomatic complexity formula
         cyclomaticComplexity = complexityCount + 1;
         
+
+
+                             cyclomaticComplexity=cyclomaticComplexity+nestingDepth-1;
         % Display detailed results
         fprintf('Cyclomatic Complexity of %s: %d\n', filePath, cyclomaticComplexity);
         fprintf('Nesting Depth Detected: %d\n', nestingDepth);
